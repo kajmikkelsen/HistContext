@@ -320,6 +320,18 @@ class HistContext(Gramplet):
         with open(flnm, encoding="utf-8") as myfile:
             for words in csv.reader(myfile, delimiter=";"):
                 self.linenbr += 1
+                if (
+                    not words
+                    or not words[0].strip()
+                    or words[0].lstrip().startswith("#")
+                ):
+                    continue
+                if (
+                    len(words) >= 2
+                    and words[0].strip() == "From date"
+                    and words[1].strip() == "To date"
+                ):
+                    continue
                 line = ";".join(words)
                 if len(words) not in (4, 5):
                     if len(line) > 10:
