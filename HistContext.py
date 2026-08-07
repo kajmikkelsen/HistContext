@@ -27,6 +27,7 @@
 # File: HistContext.py
 # from gramps.gen.plug import Gramplet
 
+import csv
 import os
 import logging
 import glob
@@ -321,14 +322,25 @@ class HistContext(Gramplet):
 
         self.linenbr = 0
         with open(flnm, encoding="utf-8") as myfile:
-            for line in myfile:
+            for words in csv.reader(myfile, delimiter=";"):
                 self.linenbr += 1
-                line = line.rstrip() + ";"
-                words = line.split(";")
-                if len(words) != 5:
+                if (
+                    not words
+                    or not words[0].strip()
+                    or words[0].lstrip().startswith("#")
+                ):
+                    continue
+                if (
+                    len(words) >= 2
+                    and words[0].strip() == "From date"
+                    and words[1].strip() == "To date"
+                ):
+                    continue
+                line = ";".join(words)
+                if len(words) not in (4, 5):
                     if len(line) > 10:
                         errormessage = (
-                            _(': line does not contain four sections separated by semicolons in : "')
+                            _(': line does not contain four or five sections separated by semicolons in : "')
                             + line
                             + 'i" File: '
                             + flnm
