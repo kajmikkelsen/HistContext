@@ -288,7 +288,11 @@ class HistContext(Gramplet):
                 errormessage = errormessage + (_(" in line: ")) + str(self.linenbr)
                 ErrorDialog(_("Error:"), errormessage)
             self.__show_error = False
-            date1 = Today()
+            if start_date:
+                date1 = Today()
+            else:
+                self.sort_date = ""
+                return "0"
             if self.__use_year:
                 datest = str(date1.to_calendar("gregorian").get_year())
             else:
@@ -334,7 +338,8 @@ class HistContext(Gramplet):
                 else:
                     words[0] = self.normalize_date(words[0], True, True)
                     local_sort_date = self.sort_date
-                    words[1] = self.normalize_date(words[1], True, False)
+                    if words[1]:
+                        words[1] = self.normalize_date(words[1], True, False)
                     if words[1] == "0":
                         words[1] = ""
                     words[2] = words[2].replace('"', "")
